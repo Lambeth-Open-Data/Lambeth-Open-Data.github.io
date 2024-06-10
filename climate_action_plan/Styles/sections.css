@@ -9,6 +9,9 @@
 .charts-container {
   overflow-y: scroll;
 }
+.charts-container::-webkit-scrollbar {
+  display: none;
+}
 .chart-container {
   border: gray solid 1px;
   border-radius: 10px;
