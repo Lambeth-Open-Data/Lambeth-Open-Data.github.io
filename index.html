@@ -41,7 +41,7 @@
 
       </div>
 
-      <h2>Introductopn</h2>
+      <h2>Introduction</h2>
       <hr class="solid">
       <p>Welcome to Lambeth Council's open data platform. This platform aims to help direct you to open data currated by Lambeth and other partners, linking together some of the main sources of data across our web site and partners such as Impact on Urban Health and the ONS.</p>
 
@@ -118,7 +118,16 @@
     </main>
 
     <footer>
-      <p>Copyright © 2023 Lambeth Council</p>
+      <p>Copyright © <span id="copyrightYear"></span> Lambeth Council</p>
+      <p>Maintained by the Lambeth data team. For any queries please <a href="mailto:data@lambeth.gov.uk">email the data team.</a></p>
+
+      <script>
+          // Get the current year
+          const currentYear = new Date().getFullYear();
+
+          // Update the content of the span element with the current year
+          document.getElementById("copyrightYear").textContent = currentYear;
+      </script>
     </footer>
 
   </body>
