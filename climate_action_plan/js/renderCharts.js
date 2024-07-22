@@ -24,9 +24,11 @@ export function displayCharts(sectorCharts) {
       <div class="chart-meta">
         <p>${chart["Chart-Description"]}</p>
         <p><strong>Data Source:</strong> ${chart["Data-Source"]}</p>
-        <p><strong>Source Website:</strong> <a href="${
-          chart["Source-Website"]
-        }" target="_blank">${chart["Source-Website"]}</a></p>
+        ${
+          chart["Source-Website"].startsWith("https")
+            ? `<p><strong>Source:</strong> <a href="${chart["Source-Website"]}" target="_blank">${chart["Source-Website"]}</a></p>`
+            : `<p><strong>Source:</strong> ${chart["Source-Website"]}</p>`
+        }
       </div>
     </div>
   `
