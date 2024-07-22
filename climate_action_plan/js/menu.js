@@ -45,9 +45,6 @@ export async function renderMenu() {
         <li class="flex align-center"><!--<i class="fa fa-home"></i>--><p>Home</p></li>
       </a>
       ${menuList}
-      <a href="coverage.html">
-        <li class="flex align-center"><!--<i class="fa fa-map-pin"></i>--><p>Coverage Map</p></li>
-      </a>
     </ul>`;
     console.log("Menu rendered");
   } catch (error) {
