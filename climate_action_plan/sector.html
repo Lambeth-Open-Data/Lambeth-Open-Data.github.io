@@ -6,7 +6,7 @@
     <title>Net Zero Dashboard - Sector</title>
     <link
       rel="icon"
-      href="Images/climate-action-favicon.png"
+      href="images/climate-action-favicon.png"
       type="image/x-icon"
     />
     <link
@@ -139,9 +139,10 @@
       .coverageBtn:hover {
         background-color: lightgray;
       }
-      .hidden {
+      .hidden-btn {
         display: none;
       }
+
       @media (min-width: 1300px) {
         #sectorDescription {
           font-size: x-large;
@@ -214,7 +215,7 @@
         var id = getUrlParameter("id");
         var coverageBtn = document.getElementById("coverageBtn");
         if (id !== "1") {
-          coverageBtn.classList.add("hidden");
+          coverageBtn.classList.add("hidden-btn");
         }
       });
     </script>
