@@ -32,33 +32,54 @@ export function displaySectorInfo(sector) {
     // Set the CSS variable for the color
     document.documentElement.style.setProperty("--sectorColour", sectorColour);
 
-    // Displaying goals
-    sectorGoals.innerHTML = `
-     <button class="flex space-between align-center" id="goalsButton" onclick="toggleVisibility('goals')">
-     <h2>Goals</h2><i class="fa fa-plus"></i>
-     </button>
-<div id="goals" class="toggle-content hidden">
-  <div class="goal">
-    <h4>${sector["Goal-1-Name"]}</h4>
-    <li>${sector["Goal-1-Description"]}</li>
-  </div>
-  <div class="goal">
-    <h4>${sector["Goal-2-Name"]}</h4>
-    <li>${sector["Goal-2-Description"]}</li>
-  </div>
-  <div class="goal">
-    <h4>${sector["Goal-3-Name"]}</h4>
-    <li>${sector["Goal-3-Description"]}</li>
-  </div>
-  <div class="goal">
-    <h4>${sector["Goal-4-Name"]}</h4>
-    <li>${sector["Goal-4-Description"]}</li>
-  </div>
-</div>
+    // Check if any goals are not empty
+    const goals = [
+      sector["Goal-1-Name"],
+      sector["Goal-1-Description"],
+      sector["Goal-2-Name"],
+      sector["Goal-2-Description"],
+      sector["Goal-3-Name"],
+      sector["Goal-3-Description"],
+      sector["Goal-4-Name"],
+      sector["Goal-4-Description"],
+    ];
 
+    const hasGoals = goals.some((goal) => goal && goal.trim() !== "");
 
-    `;
-    console.log("Sector Goals updated");
+    if (hasGoals) {
+      // Displaying goals
+      sectorGoals.innerHTML = `
+        <button class="flex space-between align-center" id="goalsButton" onclick="toggleVisibility('goals')">
+          <h2>Goals</h2><i class="fa fa-plus"></i>
+        </button>
+        <div id="goals" class="toggle-content hidden">
+          ${
+            sector["Goal-1-Name"]
+              ? `<div class="goal"><h4>${sector["Goal-1-Name"]}</h4><li>${sector["Goal-1-Description"]}</li></div>`
+              : ""
+          }
+          ${
+            sector["Goal-2-Name"]
+              ? `<div class="goal"><h4>${sector["Goal-2-Name"]}</h4><li>${sector["Goal-2-Description"]}</li></div>`
+              : ""
+          }
+          ${
+            sector["Goal-3-Name"]
+              ? `<div class="goal"><h4>${sector["Goal-3-Name"]}</h4><li>${sector["Goal-3-Description"]}</li></div>`
+              : ""
+          }
+          ${
+            sector["Goal-4-Name"]
+              ? `<div class="goal"><h4>${sector["Goal-4-Name"]}</h4><li>${sector["Goal-4-Description"]}</li></div>`
+              : ""
+          }
+        </div>
+      `;
+      console.log("Sector Goals updated");
+    } else {
+      sectorGoals.innerHTML = ""; // Clear the goals element if there are no goals
+      console.log("No goals to display");
+    }
   } catch (error) {
     console.error("Error displaying sector information:", error);
   }

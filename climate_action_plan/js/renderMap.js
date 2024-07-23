@@ -14,15 +14,16 @@ function getColorForValue(value) {
 
 // Function to render a choropleth map with customizable colors
 export function renderChoroplethMap(containerId, geojson, valueProperty) {
-  const width = 300;
-  const height = 550;
+  const width = 600;
+  const height = 1000;
 
-  // Create an SVG element
+  // Create an SVG element with a viewBox
   const svg = d3
     .select(`#${containerId}`)
     .append("svg")
-    .attr("width", width)
-    .attr("height", height);
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("preserveAspectRatio", "xMidYMid meet")
+    .classed("responsive-svg", true);
 
   // Create a projection and path generator
   const projection = d3.geoMercator().fitSize([width, height], geojson);
