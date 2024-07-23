@@ -32,6 +32,16 @@
         overflow-y: scroll;
         padding: 0;
       }
+      #levels {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+      #heroImage {
+        width: 100%;
+        height: 35%;
+        overflow: hidden;
+        position: relative;
+      }
       .box {
         margin: 10px;
         padding: 20px;
@@ -54,10 +64,27 @@
       }
       @media (min-width: 1300px) {
         .box {
-          padding: 25px;
+          padding-left: 50px;
+          padding-right: 50px;
+        }
+        .box h3 {
+          font-size: 2em;
         }
         .box p {
+          font-size: 1.6em;
+        }
+        #heroImage {
+          height: 40%;
+        }
+        #heroImage h2 {
+          font-size: xx-large;
+        }
+        #heroImage p {
           font-size: x-large;
+        }
+        #levels {
+          padding-left: 50px;
+          padding-right: 50px;
         }
       }
     </style>
@@ -67,9 +94,7 @@
     <main class="flex">
       <div class="sideMenu"></div>
       <section id="mainSection" class="mainSection" style="position: relative">
-        <div
-          style="width: 100%; height: 35%; overflow: hidden; position: relative"
-        >
+        <div id="heroImage">
           <img
             src="Images/Streatham Common Woodland_DSC5907 Max A Rush_Magnus Andersson.jpg"
             alt=""
@@ -103,7 +128,7 @@
         <h2>
           Lambeth’s Climate Partnership is tracking progress at three levels:
         </h2>
-        <div class="flex">
+        <div id="levels" class="flex">
           <div class="box bck-green">
             <h3>NET-ZERO TARGET</h3>
             <p><strong>Metric:</strong> Overall reduction in emissions</p>
