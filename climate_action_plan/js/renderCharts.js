@@ -1,4 +1,3 @@
-// js/renderCharts.js
 import { renderChart } from "./chartService.js";
 
 export function displayCharts(sectorCharts) {
@@ -58,8 +57,19 @@ export function displayCharts(sectorCharts) {
       })
       .then((csvText) => {
         console.log(`CSV data for chart ${chart["Chart-ID"]}:`, csvText);
-        const chartData = Papa.parse(csvText, { header: true }).data;
+        let chartData = Papa.parse(csvText, { header: true }).data;
+
+        // Log the parsed data before filtering
         console.log(`Parsed chart data for ${chart["Chart-ID"]}:`, chartData);
+
+        // Filter out rows where all fields are empty
+        chartData = chartData.filter((row) =>
+          Object.values(row).some((value) => value.trim() !== "")
+        );
+
+        // Log the filtered data to ensure rows aren't incorrectly removed
+        console.log(`Filtered chart data for ${chart["Chart-ID"]}:`, chartData);
+
         renderChart(chartData, `chart-${chart["Chart-ID"]}`, chart);
       })
       .catch((error) => {
