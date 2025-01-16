@@ -121,7 +121,7 @@ export function renderChart(data, elementId, chartInfo) {
     })
     .append("title") // Add title element for tooltips
     .text((d) => {
-      const formatNumber = d3.format(",.0f"); // Define the format function
+      const formatNumber = d3.format(",.2f");
       return `Value: ${formatNumber(d[chartInfo["Y-Axis"]])} ${
         chartInfo["Unit"]
       } \nYear: ${d[chartInfo["X-Axis"]]}`;
