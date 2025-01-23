@@ -18,10 +18,10 @@ export function renderChart(data, elementId, chartInfo) {
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
   // Define X and Y scales
-  const x = d3
-    .scaleLinear()
-    .domain(d3.extent(data, (d) => +d[chartInfo["X-Axis"]]))
-    .range([0, width]);
+  const xDomain = [...new Set(data.map((d) => +d[chartInfo["X-Axis"]]))].sort(
+    (a, b) => a - b
+  );
+  const x = d3.scaleLinear().domain(d3.extent(xDomain)).range([0, width]);
 
   const y = d3
     .scaleLinear()
@@ -32,29 +32,28 @@ export function renderChart(data, elementId, chartInfo) {
   console.log("X scale domain:", x.domain());
   console.log("Y scale domain:", y.domain());
 
-  // Define X-axis tick format
-  const xAxisTickFormat = d3.format("d"); // Format as integer
+  // Determine tick values to limit max ticks to 7 and min to 2
+  const tickCount = Math.min(7, Math.max(2, xDomain.length));
+  const tickValues = xDomain.filter(
+    (d, i) => i % Math.ceil(xDomain.length / tickCount) === 0
+  );
 
   // Append X axis with formatted ticks
   svg
     .append("g")
     .attr("class", "x-axis")
     .attr("transform", `translate(0,${height})`)
-    .call(d3.axisBottom(x).tickValues(x.domain()).tickFormat(xAxisTickFormat))
-    .append("text")
-    .attr("class", "x-axis-label")
-    .attr("x", width / 2)
-    .attr("y", 40)
-    .attr("text-anchor", "middle")
-    .text(chartInfo["X-Axis"]);
+    .call(d3.axisBottom(x).tickValues(tickValues).tickFormat(d3.format("d")))
+    .selectAll("text")
+    .attr("text-anchor", "middle");
 
-  console.log("X axis appended");
+  console.log("X axis appended with dynamic ticks:", tickValues);
 
   // Append Y axis with a maximum of 5 ticks
   svg
     .append("g")
     .attr("class", "y-axis")
-    .call(d3.axisLeft(y).ticks(5)) // Limit the number of ticks to 5
+    .call(d3.axisLeft(y).ticks(5))
     .append("text")
     .attr("class", "y-axis-label")
     .attr("transform", "rotate(-90)")
@@ -62,9 +61,9 @@ export function renderChart(data, elementId, chartInfo) {
     .attr("x", -height / 2)
     .attr("dy", "0.71em")
     .attr("text-anchor", "middle")
-    .attr("fill", "black") // Ensure text is visible
-    .style("font-size", "14px") // Adjust font size here
-    .style("font-family", "sans-serif") // Set font to sans-serif
+    .attr("fill", "black")
+    .style("font-size", "14px")
+    .style("font-family", "sans-serif")
     .text(chartInfo["Unit"]);
 
   console.log("Y axis appended with label:", chartInfo["Unit"]);
@@ -84,7 +83,7 @@ export function renderChart(data, elementId, chartInfo) {
     .attr("class", "line")
     .attr("d", line)
     .attr("fill", "none")
-    .attr("stroke", "var(--sectorColour, black)") // Use CSS variable for color
+    .attr("stroke", "var(--sectorColour, black)")
     .attr("stroke-width", 2);
 
   console.log("Line path appended");
@@ -98,28 +97,28 @@ export function renderChart(data, elementId, chartInfo) {
     .attr("class", "dot")
     .attr("cx", (d) => x(+d[chartInfo["X-Axis"]]))
     .attr("cy", (d) => y(+d[chartInfo["Y-Axis"]]))
-    .attr("r", 4) // Initial radius of the circles
-    .attr("fill", "var(--sectorColour, black)") // Use CSS variable for color
-    .attr("stroke", "white") // Initial stroke color
-    .attr("stroke-width", 1) // Initial stroke width
-    .style("cursor", "pointer") // Change cursor to pointer on hover
+    .attr("r", 4)
+    .attr("fill", "var(--sectorColour, black)")
+    .attr("stroke", "white")
+    .attr("stroke-width", 1)
+    .style("cursor", "pointer")
     .on("mouseover", function (event, d) {
       d3.select(this)
         .transition()
         .duration(200)
-        .attr("r", 6) // Radius on hover
-        .attr("stroke", "black") // Stroke color on hover
-        .attr("stroke-width", 2); // Stroke width on hover
+        .attr("r", 6)
+        .attr("stroke", "black")
+        .attr("stroke-width", 2);
     })
     .on("mouseout", function (event, d) {
       d3.select(this)
         .transition()
         .duration(200)
-        .attr("r", 4) // Radius on mouse out
-        .attr("stroke", "white") // Stroke color on mouse out
-        .attr("stroke-width", 1); // Stroke width on mouse out
+        .attr("r", 4)
+        .attr("stroke", "white")
+        .attr("stroke-width", 1);
     })
-    .append("title") // Add title element for tooltips
+    .append("title")
     .text((d) => {
       const formatNumber = d3.format(",.1f");
       return `Value: ${formatNumber(d[chartInfo["Y-Axis"]])} ${
