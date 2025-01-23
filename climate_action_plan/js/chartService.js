@@ -40,7 +40,7 @@ export function renderChart(data, elementId, chartInfo) {
     .append("g")
     .attr("class", "x-axis")
     .attr("transform", `translate(0,${height})`)
-    .call(d3.axisBottom(x).ticks(5).tickFormat(xAxisTickFormat)) // Apply custom format
+    .call(d3.axisBottom(x).tickValues(x.domain()).tickFormat(xAxisTickFormat))
     .append("text")
     .attr("class", "x-axis-label")
     .attr("x", width / 2)
