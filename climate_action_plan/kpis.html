@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Net Zero Dashboard</title>
+    <link
+      rel="icon"
+      href="Images/climate-action-favicon.png"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet" href="/dist/output.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+  </head>
+
+  <body class="bg-gray-50 text-gray-900 font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow-md p-4 flex justify-between items-center">
+      <h1 class="text-xl font-semibold">Net Zero Dashboard</h1>
+      <!-- Add nav/menu here -->
+    </header>
+
+    <main class="flex min-h-screen">
+      <!-- Sidebar -->
+      <aside class="sideMenu w-64 bg-white shadow-lg hidden lg:block p-4">
+        <!-- Side menu content -->
+        <p class="text-gray-600">Side Menu</p>
+      </aside>
+
+      <!-- Main Section -->
+      <section class="flex-1 overflow-y-auto">
+        <!-- Hero Section -->
+        <div class="relative h-[35vh] lg:h-[40vh] w-full">
+          <img
+            src="Images/Streatham Common Woodland_DSC5907 Max A Rush_Magnus Andersson.jpg"
+            alt=""
+            class="w-full h-full object-cover"
+          />
+          <div
+            class="absolute inset-0 bg-black/30 flex items-center justify-center px-6"
+          >
+            <div class="text-center text-white max-w-3xl">
+              <h2 class="text-2xl lg:text-4xl font-bold mb-4">
+                MONITORING OUR PROGRESS
+              </h2>
+              <p class="text-base lg:text-xl">
+                Tracking Lambeth’s Climate Action Plan progress helps us
+                understand where we’re making positive strides, what is working,
+                and where we need to accelerate action.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Title -->
+        <div class="text-center my-10 px-4">
+          <h2 class="text-xl lg:text-2xl font-semibold">
+            Lambeth’s Climate Partnership is tracking progress at three levels:
+          </h2>
+        </div>
+
+        <!-- Boxes Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 px-4 lg:px-20 mb-16">
+          <!-- Box 1 -->
+          <div class="rounded-2xl p-6 shadow-lg bg-green-700 text-white">
+            <h3 class="text-xl font-bold mb-2">NET-ZERO TARGET</h3>
+            <p class="mb-1">
+              <strong>Metric:</strong> Overall reduction in emissions
+            </p>
+            <p>
+              Annual monitoring on the borough emissions inventory, tracking
+              trends across sectors, and per capita emissions.
+            </p>
+          </div>
+
+          <!-- Box 2 -->
+          <div class="rounded-2xl p-6 shadow-lg bg-red-700 text-white">
+            <h3 class="text-xl font-bold mb-2">GOALS</h3>
+            <p class="mb-1">
+              <strong>Metric:</strong> Progress on Goals in Lambeth's Climate
+              Action Plan
+            </p>
+            <p>
+              Tracking progress against the 20 goals and 5 climate themes –
+              where trend data is available and possible to visualise.
+            </p>
+          </div>
+
+          <!-- Box 3 -->
+          <div class="rounded-2xl p-6 shadow-lg bg-blue-700 text-white">
+            <h3 class="text-xl font-bold mb-2">ACTION</h3>
+            <p class="mb-1">
+              <strong>Metric:</strong> Progress on Actions in Lambeth's Climate
+              Action Plan
+            </p>
+            <p>
+              Monitoring actions taken towards the goals, publishing an
+              assessment of progress, insights, and barriers.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white shadow-inner p-4 text-center text-sm text-gray-500">
+      © 2025 Lambeth Climate Partnership
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script type="module" src="js/index.js"></script>
+  </body>
+</html>

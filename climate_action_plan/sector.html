@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html class="h-screen overflow-hidden" lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Net Zero Dashboard - Sector</title>
+    <link
+      rel="icon"
+      href="Images/climate-action-favicon.png"
+      type="image/x-icon"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/dist/output.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+      /* Only custom styles that Tailwind can't handle easily */
+      .toggle-content {
+        transition: opacity 0.5s ease, height 0.3s ease;
+        opacity: 0;
+        height: 0;
+        overflow: hidden;
+      }
+      .toggle-content.visible {
+        opacity: 1;
+        height: auto;
+      }
+
+      .hide-scrollbar {
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE/Edge */
+      }
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none; /* Chrome/Safari */
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 min-h-screen flex flex-col h-full hide-scrollbar">
+    <header class="header flex justify-between items-center p-4"></header>
+
+    <main class="flex flex-1 overflow-hidden gap-6 pr-4 pb-2">
+      <!-- Side Menu -->
+      <div
+        class="sideMenu w-64 bg-white shadow-md ml-4 rounded-md overflow-auto"
+      ></div>
+
+      <!-- Main Content -->
+      <section
+        id="mainSection"
+        class="flex flex-col md:flex-row flex-1 overflow-hidden p-4 gap-6 min-h-0"
+      >
+        <!-- Sector Info -->
+        <aside
+          id="sectorInfo"
+          class="bg-white rounded-md shadow-md p-6 max-w-md flex-shrink-0 overflow-y-auto min-h-0 hide-scrollbar"
+          style="--sectorColour: #3f8628"
+        >
+          <div class="flex items-center gap-4 mb-4">
+            <img
+              id="sectorImage"
+              src=""
+              alt="Sector Image"
+              class="w-24 h-24 rounded-md object-cover"
+            />
+            <h2
+              id="sectorName"
+              class="text-3xl font-semibold text-gray-900 truncate"
+            >
+              Sector Name
+            </h2>
+          </div>
+          <p
+            id="sectorDescription"
+            class="text-gray-700 leading-relaxed mb-6 text-base md:text-lg"
+          >
+            Sector Description
+          </p>
+          <ul id="sectorGoals" class="space-y-4 text-gray-800"></ul>
+        </aside>
+
+        <!-- Charts & Buttons -->
+        <div
+          class="bg-white rounded-md shadow-md p-4 flex-col flex-1 overflow-y-auto gap-6 min-h-0 hide-scrollbar"
+        >
+          <div class="flex justify-center md:justify-start">
+            <a id="coverageBtn" href="coverage.html" class="w-full max-w-xs">
+              <button
+                class="w-full shadow-lg bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 text-gray-900 font-medium py-3 rounded-lg transition"
+              >
+                Tree Canopy Coverage
+              </button>
+            </a>
+          </div>
+
+          <div
+            id="chartsContainer"
+            class="flex flex-wrap gap-6 justify-center md:justify-start overflow-auto"
+          ></div>
+        </div>
+      </section>
+    </main>
+
+    <footer
+      class="flex justify-between items-center p-4 bg-white shadow-inner"
+    ></footer>
+
+    <script>
+      function toggleVisibility(elementId) {
+        const element = document.getElementById(elementId);
+        if (element) {
+          element.classList.toggle("visible");
+        }
+      }
+
+      function getUrlParameter(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        const regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
+        const results = regex.exec(location.search);
+        return results === null
+          ? ""
+          : decodeURIComponent(results[1].replace(/\+/g, " "));
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const id = getUrlParameter("id");
+        const coverageBtn = document.getElementById("coverageBtn");
+        if (id !== "1") {
+          coverageBtn.classList.add("hidden");
+        }
+      });
+    </script>
+
+    <script type="module" src="js/sector.js"></script>
+  </body>
+</html>
