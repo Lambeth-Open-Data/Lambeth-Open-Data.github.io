@@ -2,7 +2,7 @@ export function renderChart(data, elementId, chartInfo) {
   console.log("Rendering chart with info:", chartInfo);
 
   // Dimensions and margins
-  const margin = { top: 20, right: 20, bottom: 30, left: 70 };
+  const margin = { top: 20, right: 20, bottom: 40, left: 70 };
   const width = 400 - margin.left - margin.right;
   const height = 300 - margin.top - margin.bottom;
 
@@ -15,7 +15,7 @@ export function renderChart(data, elementId, chartInfo) {
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
-  // Detect numeric vs categorical X values
+  // Detect numeric vs categorical X-axis
   const xValues = data.map((d) => d[chartInfo["X-Axis"]]);
   const allNumeric = xValues.every((v) => !isNaN(parseFloat(v)));
 
@@ -39,7 +39,7 @@ export function renderChart(data, elementId, chartInfo) {
       .range([0, width])
       .padding(0.5);
 
-    // Pick around 7 evenly spaced tick labels
+    // Show ~7 evenly spaced labels
     const totalLabels = xValues.length;
     const step = Math.ceil(totalLabels / 7);
     const shownTicks = xValues.filter((_, i) => i % step === 0);
@@ -47,10 +47,14 @@ export function renderChart(data, elementId, chartInfo) {
     xAxis = d3.axisBottom(x).tickValues(shownTicks);
   }
 
-  // Y-axis (always numeric)
+  // --- Y-Axis: handles negative values gracefully ---
+  const yMin = d3.min(data, (d) => +d[chartInfo["Y-Axis"]]);
+  const yMax = d3.max(data, (d) => +d[chartInfo["Y-Axis"]]);
+
   const y = d3
     .scaleLinear()
-    .domain([0, d3.max(data, (d) => +d[chartInfo["Y-Axis"]])])
+    // ensure 0 is visible if data includes both positive and negative
+    .domain([Math.min(0, yMin), Math.max(0, yMax)])
     .nice()
     .range([height, 0]);
 
@@ -64,14 +68,14 @@ export function renderChart(data, elementId, chartInfo) {
     .style("text-anchor", "end")
     .attr("dx", "-0.6em")
     .attr("dy", "0.15em")
-    .attr("transform", "rotate(-40)"); // rotate labels for readability
+    .attr("transform", "rotate(-40)"); // Rotate for readability
 
   // Add X-axis label
   svg
     .append("text")
     .attr("class", "x-axis-label")
     .attr("x", width / 2)
-    .attr("y", height + 50)
+    .attr("y", height + 55)
     .attr("text-anchor", "middle")
     .text(chartInfo["X-Axis"]);
 
