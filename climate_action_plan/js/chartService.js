@@ -1,12 +1,10 @@
 export function renderChart(data, elementId, chartInfo) {
   console.log("Rendering chart with info:", chartInfo);
 
-  // Dimensions and margins
   const margin = { top: 20, right: 20, bottom: 40, left: 70 };
   const width = 400 - margin.left - margin.right;
   const height = 300 - margin.top - margin.bottom;
 
-  // Create SVG container
   const svg = d3
     .select(`#${elementId}`)
     .append("svg")
@@ -15,50 +13,62 @@ export function renderChart(data, elementId, chartInfo) {
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
-  // Detect numeric vs categorical X-axis
+  // Extract X values
   const xValues = data.map((d) => d[chartInfo["X-Axis"]]);
   const allNumeric = xValues.every((v) => !isNaN(parseFloat(v)));
 
   let x, xAxis;
 
   if (allNumeric) {
-    // Numeric X-axis
-    x = d3
-      .scaleLinear()
-      .domain(d3.extent(xValues, (v) => +v))
-      .nice()
-      .range([0, width]);
+    const numericValues = xValues.map((v) => +v);
+    const uniqueValues = Array.from(new Set(numericValues)).sort((a, b) => a - b);
 
-    // Limit tick count to ~7
-    xAxis = d3.axisBottom(x).ticks(7).tickFormat(d3.format("d"));
+    if (uniqueValues.length <= 20) {
+      // Treat discrete numeric values (e.g., years) as categorical points
+      x = d3
+        .scalePoint()
+        .domain(uniqueValues)
+        .range([0, width])
+        .padding(0.5);
+
+      // Show about 7 ticks
+      const step = Math.ceil(uniqueValues.length / 7);
+      const shownTicks = uniqueValues.filter((_, i) => i % step === 0);
+      xAxis = d3.axisBottom(x).tickValues(shownTicks);
+    } else {
+      // Continuous numeric values (e.g., measurements)
+      x = d3
+        .scaleLinear()
+        .domain(d3.extent(numericValues))
+        .nice()
+        .range([0, width]);
+      xAxis = d3.axisBottom(x).ticks(7).tickFormat(d3.format("d"));
+    }
   } else {
-    // Categorical X-axis
+    // Categorical X-axis (text labels)
+    const uniqueValues = Array.from(new Set(xValues));
     x = d3
       .scalePoint()
-      .domain(xValues)
+      .domain(uniqueValues)
       .range([0, width])
       .padding(0.5);
 
-    // Show ~7 evenly spaced labels
-    const totalLabels = xValues.length;
-    const step = Math.ceil(totalLabels / 7);
-    const shownTicks = xValues.filter((_, i) => i % step === 0);
-
+    // Show about 7 evenly spaced labels
+    const step = Math.ceil(uniqueValues.length / 7);
+    const shownTicks = uniqueValues.filter((_, i) => i % step === 0);
     xAxis = d3.axisBottom(x).tickValues(shownTicks);
   }
 
-  // --- Y-Axis: handles negative values gracefully ---
+  // --- Y-Axis: handle positive & negative values ---
   const yMin = d3.min(data, (d) => +d[chartInfo["Y-Axis"]]);
   const yMax = d3.max(data, (d) => +d[chartInfo["Y-Axis"]]);
-
   const y = d3
     .scaleLinear()
-    // ensure 0 is visible if data includes both positive and negative
     .domain([Math.min(0, yMin), Math.max(0, yMax)])
     .nice()
     .range([height, 0]);
 
-  // Append X axis
+  // Draw X-axis
   svg
     .append("g")
     .attr("class", "x-axis")
@@ -68,9 +78,9 @@ export function renderChart(data, elementId, chartInfo) {
     .style("text-anchor", "end")
     .attr("dx", "-0.6em")
     .attr("dy", "0.15em")
-    .attr("transform", "rotate(-40)"); // Rotate for readability
+    .attr("transform", "rotate(-40)");
 
-  // Add X-axis label
+  // X-axis label
   svg
     .append("text")
     .attr("class", "x-axis-label")
@@ -79,7 +89,7 @@ export function renderChart(data, elementId, chartInfo) {
     .attr("text-anchor", "middle")
     .text(chartInfo["X-Axis"]);
 
-  // Append Y axis
+  // Draw Y-axis
   svg
     .append("g")
     .attr("class", "y-axis")
@@ -96,15 +106,16 @@ export function renderChart(data, elementId, chartInfo) {
     .style("font-family", "sans-serif")
     .text(chartInfo["Unit"]);
 
-  // Define line generator
+  // Line generator
   const line = d3
     .line()
-    .x((d) =>
-      allNumeric ? x(+d[chartInfo["X-Axis"]]) : x(d[chartInfo["X-Axis"]])
-    )
+    .x((d) => {
+      const xVal = d[chartInfo["X-Axis"]];
+      return allNumeric ? x(+xVal) : x(xVal);
+    })
     .y((d) => y(+d[chartInfo["Y-Axis"]]));
 
-  // Append line path
+  // Draw line
   svg
     .append("path")
     .data([data])
@@ -114,23 +125,24 @@ export function renderChart(data, elementId, chartInfo) {
     .attr("stroke", "var(--sectorColour, black)")
     .attr("stroke-width", 2);
 
-  // Add data point circles
+  // Draw circles
   svg
     .selectAll(".dot")
     .data(data)
     .enter()
     .append("circle")
     .attr("class", "dot")
-    .attr("cx", (d) =>
-      allNumeric ? x(+d[chartInfo["X-Axis"]]) : x(d[chartInfo["X-Axis"]])
-    )
+    .attr("cx", (d) => {
+      const xVal = d[chartInfo["X-Axis"]];
+      return allNumeric ? x(+xVal) : x(xVal);
+    })
     .attr("cy", (d) => y(+d[chartInfo["Y-Axis"]]))
     .attr("r", 4)
     .attr("fill", "var(--sectorColour, black)")
     .attr("stroke", "white")
     .attr("stroke-width", 1)
     .style("cursor", "pointer")
-    .on("mouseover", function (event, d) {
+    .on("mouseover", function () {
       d3.select(this)
         .transition()
         .duration(200)
