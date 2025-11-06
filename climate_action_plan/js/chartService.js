@@ -1,12 +1,10 @@
 export function renderChart(data, elementId, chartInfo) {
   console.log("Rendering chart with info:", chartInfo);
 
-  // Dimensions and margins for the chart
+  // Dimensions and margins
   const margin = { top: 20, right: 20, bottom: 30, left: 70 };
   const width = 400 - margin.left - margin.right;
   const height = 300 - margin.top - margin.bottom;
-
-  console.log("Chart dimensions:", { width, height });
 
   // Create SVG container
   const svg = d3
@@ -17,43 +15,44 @@ export function renderChart(data, elementId, chartInfo) {
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
-  // Detect whether X-axis values are numeric
+  // Detect numeric vs categorical X values
   const xValues = data.map((d) => d[chartInfo["X-Axis"]]);
   const allNumeric = xValues.every((v) => !isNaN(parseFloat(v)));
 
-  let x;
-  let xAxis;
+  let x, xAxis;
 
   if (allNumeric) {
-    // Numeric X-axis (linear scale)
+    // Numeric X-axis
     x = d3
       .scaleLinear()
       .domain(d3.extent(xValues, (v) => +v))
       .nice()
       .range([0, width]);
 
-    xAxis = d3.axisBottom(x).ticks(5).tickFormat(d3.format("d"));
-    console.log("Using linear X scale:", x.domain());
+    // Limit tick count to ~7
+    xAxis = d3.axisBottom(x).ticks(7).tickFormat(d3.format("d"));
   } else {
-    // Categorical X-axis (point scale)
+    // Categorical X-axis
     x = d3
       .scalePoint()
       .domain(xValues)
       .range([0, width])
       .padding(0.5);
 
-    xAxis = d3.axisBottom(x);
-    console.log("Using point X scale:", x.domain());
+    // Pick around 7 evenly spaced tick labels
+    const totalLabels = xValues.length;
+    const step = Math.ceil(totalLabels / 7);
+    const shownTicks = xValues.filter((_, i) => i % step === 0);
+
+    xAxis = d3.axisBottom(x).tickValues(shownTicks);
   }
 
-  // Define Y scale
+  // Y-axis (always numeric)
   const y = d3
     .scaleLinear()
     .domain([0, d3.max(data, (d) => +d[chartInfo["Y-Axis"]])])
     .nice()
     .range([height, 0]);
-
-  console.log("Y scale domain:", y.domain());
 
   // Append X axis
   svg
@@ -61,14 +60,20 @@ export function renderChart(data, elementId, chartInfo) {
     .attr("class", "x-axis")
     .attr("transform", `translate(0,${height})`)
     .call(xAxis)
+    .selectAll("text")
+    .style("text-anchor", "end")
+    .attr("dx", "-0.6em")
+    .attr("dy", "0.15em")
+    .attr("transform", "rotate(-40)"); // rotate labels for readability
+
+  // Add X-axis label
+  svg
     .append("text")
     .attr("class", "x-axis-label")
     .attr("x", width / 2)
-    .attr("y", 40)
+    .attr("y", height + 50)
     .attr("text-anchor", "middle")
     .text(chartInfo["X-Axis"]);
-
-  console.log("X axis appended");
 
   // Append Y axis
   svg
@@ -87,8 +92,6 @@ export function renderChart(data, elementId, chartInfo) {
     .style("font-family", "sans-serif")
     .text(chartInfo["Unit"]);
 
-  console.log("Y axis appended with label:", chartInfo["Unit"]);
-
   // Define line generator
   const line = d3
     .line()
@@ -96,8 +99,6 @@ export function renderChart(data, elementId, chartInfo) {
       allNumeric ? x(+d[chartInfo["X-Axis"]]) : x(d[chartInfo["X-Axis"]])
     )
     .y((d) => y(+d[chartInfo["Y-Axis"]]));
-
-  console.log("Line generator function created");
 
   // Append line path
   svg
@@ -109,9 +110,7 @@ export function renderChart(data, elementId, chartInfo) {
     .attr("stroke", "var(--sectorColour, black)")
     .attr("stroke-width", 2);
 
-  console.log("Line path appended");
-
-  // Add circles for data points
+  // Add data point circles
   svg
     .selectAll(".dot")
     .data(data)
@@ -135,7 +134,7 @@ export function renderChart(data, elementId, chartInfo) {
         .attr("stroke", "black")
         .attr("stroke-width", 2);
     })
-    .on("mouseout", function (event, d) {
+    .on("mouseout", function () {
       d3.select(this)
         .transition()
         .duration(200)
@@ -148,10 +147,8 @@ export function renderChart(data, elementId, chartInfo) {
       const formatNumber = d3.format(",.1f");
       return `Value: ${formatNumber(d[chartInfo["Y-Axis"]])} ${
         chartInfo["Unit"]
-      } \n${chartInfo["X-Axis"]}: ${d[chartInfo["X-Axis"]]}`;
+      }\n${chartInfo["X-Axis"]}: ${d[chartInfo["X-Axis"]]}`;
     });
-
-  console.log("Circles with hover effects and tooltips added");
 
   console.log("Chart rendering complete");
 }
